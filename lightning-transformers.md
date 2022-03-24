@@ -11,11 +11,9 @@ LightningDataModule定义了5个api:
 
 **prepare_data**
 该函数负责预处理数据，包括下载，转换，tokenize。
+*注意*：prepare_data is called from a single process (e.g. GPU 0). Do not use it to assign state (self.x = y).
 
-prepare_data is called from a single process (e.g. GPU 0). Do not use it to assign state (self.x = y).
-{: .alert .alert-warning}
 
-and optionally one or multiple predict_dataloader(s).
 ## Datasets of transformers
 
 datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。
