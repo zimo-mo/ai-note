@@ -37,13 +37,20 @@ cProfile.run('re.compile("foo|bar")', sort="tottime")
         ...
 ```
 **结果解读**：
+
 其中总共运行时长为0.001s, 第一行显示监听了244个调用。在这些调用中，有237个是原始接口 ，这意味着调用不是通过递归引发的。
 Ordered by: internal time ，表示最右边列中的文本字符串用于对输出进行排序。
+
   **ncalls**： 调用次数
+  
   **tottime**： 在指定函数中消耗的总时间（不包括调用子函数的时间）
+  
   **percall**： 是 tottime 除以 ncalls 的商
+  
   **cumtime**: 指定的函数及其所有子函数（从调用到退出）消耗的累积时间。这个数字对于递归函数来说是准确的。
+  
   **percall**： 函数运行一次的平均时间
+  
   **filename**: 函数名称
 
 ## 最佳实践
@@ -59,6 +66,7 @@ with cProfile.Profile() as profile:
    # do some thing
    ...
 ```
+
 对于python3.8以前的版本，还得老老实实手动开始和关闭。
          `enable()`
              开始收集分析数据。仅在 cProfile 可用。
