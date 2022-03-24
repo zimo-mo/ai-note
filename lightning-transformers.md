@@ -87,7 +87,7 @@ class MNISTDataModule(pl.LightningDataModule):
 
 `LightningModule`其实也是`torch.nn.Module`，包括5部分：
 
-  - init, Define computations here
+  - init
   - training_step
   - validation_step
   - test_step
