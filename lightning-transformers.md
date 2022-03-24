@@ -47,6 +47,9 @@ class MNISTDataModule(pl.LightningDataModule):
             self.dims = getattr(self, "dims", self.mnist_test[0][0].shape)
 ```
 
+`stage`为`setup`可选参数。为trainer实现分割逻辑`trainer.{fit,validate,test}`。如果`stage=None`，包含fit/validate/test全部逻辑。
+
+
 
 ## Datasets of transformers
 
