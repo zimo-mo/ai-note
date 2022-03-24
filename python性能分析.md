@@ -5,7 +5,7 @@
 其中cProfile和profile是python提供的两个内置的确定性性能分析工具。个人比较钟爱cProfile，所以自然就选择了cProfile啦。
 
 
-**尝鲜**
+## 尝鲜
 惯例，先按照官方文档来个`hello word`: `test.py`
 ```python
 import cProfile
@@ -44,6 +44,12 @@ Ordered by: internal time ，表示最右边列中的文本字符串用于对输
   **filename**: 函数名称
 
 ## 最佳实践
+
+当然，在实际工程中肯定不能像上一节那么玩。那怎么玩呢？
+当然是cProfile和pstats配置一起干活啊。cProfile用来收集性能数据，pstats用于统计分析cProfile记录的性能数据。
+
+
+
 
 
 ## Reference
