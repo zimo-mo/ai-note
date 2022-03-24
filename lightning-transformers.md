@@ -83,6 +83,17 @@ class MNISTDataModule(pl.LightningDataModule):
         return DataLoader(self.mnist_test, batch_size=64)
 ```
 
+### LightningModule
+
+`LightningModule`其实也是`torch.nn.Module`，包括5部分：
+
+  - init, Define computations here
+  - training_step
+  - validation_step
+  - test_step
+  - configure_optimizers
+  
+  更详细的用法参考[LightningModule](https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_module.html?highlight=LightningModule)
 
 ## Datasets of transformers
 
