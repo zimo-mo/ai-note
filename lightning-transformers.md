@@ -49,6 +49,24 @@ class MNISTDataModule(pl.LightningDataModule):
 
 `stage`为`setup`可选参数。为trainer实现分割逻辑`trainer.{fit,validate,test}`。如果`stage=None`，包含fit/validate/test全部逻辑。
 
+**train_dataloader/val_dataloader/test_dataloader**
+`train_dataloader/val_dataloader/test_dataloader`封装并返回`setup`中分割的数据。例如：
+
+```python
+import pytorch_lightning as pl
+
+
+class MNISTDataModule(pl.LightningDataModule):
+    def train_dataloader(self):
+        return DataLoader(self.mnist_train, batch_size=64)
+        
+    def val_dataloader(self):
+        return DataLoader(self.mnist_val, batch_size=64)
+        
+    def test_dataloader(self):
+        return DataLoader(self.mnist_test, batch_size=64)
+```
+
 
 
 ## Datasets of transformers
