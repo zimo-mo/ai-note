@@ -11,16 +11,44 @@ LightningDataModule定义了5个api:
 
 **prepare_data**
 
-该函数负责预处理数据，包括下载，转换，tokenize。
+该函数负责预处理数据，包括下载，tokenize等。
 
 *注意*：prepare_data is called from a single process (e.g. GPU 0). Do not use it to assign state (self.x = y).
+
+
+**setup**
+
+如果希望对数据的操作能在每个GPU上生效，可以通过`setup`实现一下逻辑：
+
+  - 统计分类数
+  - 构建词典
+  - 数据分割（train/val/test）
+  - 数据转换
+  - ...
+
+例如：
+
+```python
+import pytorch_lightning as pl
+
+
+class MNISTDataModule(pl.LightningDataModule):
+    def setup(self, stage: Optional[str] = None):
+
+        # Assign Train/val split(s) for use in Dataloaders
+        if stage in (None, "fit"):
+            mnist_full = MNIST(self.data_dir, train=True, download=True, transform=self.transform)
+            self.mnist_train, self.mnist_val = random_split(mnist_full, [55000, 5000])
+            self.dims = self.mnist_train[0][0].shape
+
+        # Assign Test split(s) for use in Dataloaders
+        if stage in (None, "test"):
+            self.mnist_test = MNIST(self.data_dir, train=False, download=True, transform=self.transform)
+            self.dims = getattr(self, "dims", self.mnist_test[0][0].shape)
+```
 
 
 ## Datasets of transformers
 
 datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。
 
-### 安装
-```bash
-pip install datasets
-```
