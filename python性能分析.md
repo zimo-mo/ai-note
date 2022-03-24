@@ -80,7 +80,7 @@ with cProfile.Profile() as profile:
              将当前profile 的结果写入 filename 。
 
 
-为了方便调用，可以做一个装饰器，方便使用
+为了方便调用，可以做一个装饰器，
 
 python3.8以前代码采用：
 ```python
