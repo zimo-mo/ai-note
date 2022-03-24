@@ -1,7 +1,8 @@
 # python性能分析
 
 ## profile
-最近升级了推理服务版本，发现响应时长陡增。但是并没有修改主流程，想看看究竟推理链路那里出现问题了。功欲善其事欲，必先利其器。首先选择合适的性能分析工具。
+最近升级了推理服务版本，发现响应时长陡增。但是并没有修改主流程，想看看究竟推理链路那里出现问题了？为了给不熟悉性能分析的伙伴一个参考，决定还是文档化。
+功欲善其事欲，必先利其器。首先选择合适的性能分析工具。
 其中cProfile和profile是python提供的两个内置的确定性性能分析工具。个人比较钟爱cProfile，所以自然就选择了cProfile啦。
 
 
@@ -48,9 +49,108 @@ Ordered by: internal time ，表示最右边列中的文本字符串用于对输
 当然，在实际工程中肯定不能像上一节那么玩。那怎么玩呢？
 当然是cProfile和pstats配置一起干活啊。cProfile用来收集性能数据，pstats用于统计分析cProfile记录的性能数据。
 
+这里重点介绍的就是cProfile.Profile类。
+python3.8及以上引入了上下文管理器的支持，所以开启性能数据收集非常简单。
+
+```python
+with cProfile.Profile() as profile:
+   # do some thing
+   ...
+```
+对于python3.8以前的版本，还得老老实实手动开始和关闭。
+         `enable()`
+             开始收集分析数据。仅在 cProfile 可用。
+
+         `disable()`
+
+             停止收集分析数据。仅在 cProfile 可用。
+
+         `create_stats()`
+
+             停止收集分析数据，并在内部将结果记录为当前 profile。
+
+         `print_stats(sort=- 1)`
+
+             Create a Stats object based on the current profile and print the results to stdout.
+
+         `dump_stats(filename)`
+
+             将当前profile 的结果写入 filename 。
 
 
+为了方便调用，可以做一个装饰器，方便使用
+
+python3.8以前代码采用：
+```python
+import os
+from typing import Callable, Union
+from pathlib import Path
+
+
+def do_profile(path: Union[str, Path], sortby="tottime"):
+    def decorator(func: Callable):
+        def _profile(*args, **kwargs):
+            flag = os.getenv("PROFILE_ENABLE")
+            if flag:
+                profile = cProfile.Profile()
+                profile.enable()
+                result = func(*args, **kwargs)
+                profile.disable()
+                profile.dump_stats(Path(path).joinpath(f"{func.__name__}.prof"))
+                return result
+            else:
+                result = func(*args, **kwargs)
+            return result
+        return _profile
+    return decorator
+
+```
+
+python3.8及以上版本采用
+```python
+def do_profile(path: Union[str, Path], sortby="tottime"):
+    def decorator(func: Callable):
+        def _profile(*args, **kwargs):
+            flag = os.getenv("PROFILE_ENABLE")
+            if flag:
+                with cProfile.Profile() as profile:
+                    # pf.enable()
+                    result = func(*args, **kwargs)
+                    # pf.disable()
+                    profile.dump_stats(Path(path).joinpath(f"{func.__name__}.prof"))
+                return result
+            else:
+                result = func(*args, **kwargs)
+            return result
+        return _profile
+    return decorator
+```
+
+那怎么用这个工具函数呢，很简单，需要测试那个调用调用链路，用do_profile装饰一下，运行时开启PROFILE_ENABLE就可以了。如下所示`profile_test.py`。
+
+```python
+@do_profile(sys.argv[1], sortby="tottime")
+def test():
+    import numpy as np
+    eye = np.eye(10)
+    print(eye)
+
+
+test()
+
+p = pstats.Stats(os.path.join(sys.argv[1], "test.prof"))
+```
+运行: `└─▪ PROFILE_ENABLE=1 python profile_test.py ./`, 就能在当前目录看到生成的性能数据文件： `test.prof`
+
+
+接下来就是展示的时候，该pstats登场了，两行行搞定：
+```python
+p = pstats.Stats(os.path.join(sys.argv[1], "test.prof"))
+print(p.strip_dirs().sort_stats("tottime").print_stats())
+```
+
+简单的性能分析就到这里了，后面有时间再写点可视化分析的东西。
 
 
 ## Reference
-[1] https://docs.python.org/zh-cn/3/library/profile.html
+[1] https://docs.python.org/3/library/profile.html
