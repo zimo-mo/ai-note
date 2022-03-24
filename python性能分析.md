@@ -114,9 +114,7 @@ def do_profile(path: Union[str, Path], sortby="tottime"):
             flag = os.getenv("PROFILE_ENABLE")
             if flag:
                 with cProfile.Profile() as profile:
-                    # pf.enable()
                     result = func(*args, **kwargs)
-                    # pf.disable()
                     profile.dump_stats(Path(path).joinpath(f"{func.__name__}.prof"))
                 return result
             else:
