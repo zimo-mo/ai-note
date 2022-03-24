@@ -50,6 +50,7 @@ class MNISTDataModule(pl.LightningDataModule):
 `stage`为`setup`可选参数。为trainer实现分割逻辑`trainer.{fit,validate,test}`。如果`stage=None`，包含fit/validate/test全部逻辑。
 
 **train_dataloader/val_dataloader/test_dataloader**
+
 `train_dataloader/val_dataloader/test_dataloader`封装并返回`setup`中分割的数据。例如：
 
 ```python
@@ -67,9 +68,20 @@ class MNISTDataModule(pl.LightningDataModule):
         return DataLoader(self.mnist_test, batch_size=64)
 ```
 
+**predict_dataloader**
+
+返回用于推理的数据集，用于`trainer.predict`方法使用。 如下所示：
+
+```python
+import pytorch_lightning as pl
+
+
+class MNISTDataModule(pl.LightningDataModule):
+    def predict_dataloader(self):
+        return DataLoader(self.mnist_test, batch_size=64)
+```
 
 
 ## Datasets of transformers
 
 datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。
-
