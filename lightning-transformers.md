@@ -167,7 +167,7 @@ sorted_dataset = dataset.sort('label')
 
 **Shuffle**
 
-随即打乱：
+随机打乱：
 
 ```python
 shuffled_dataset = sorted_dataset.shuffle(seed=42)
