@@ -97,9 +97,9 @@ class MNISTDataModule(pl.LightningDataModule):
 
 ## Datasets of transformers
 
-datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。
+datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。以下主要从datasets加载数据、处理等两方面做介绍。其他功能参考[datasets文档](https://huggingface.co/docs/datasets)
 
-###  Load
+### 数据加载
 
 数据加载支持以下加载方式：
 - The Hub
