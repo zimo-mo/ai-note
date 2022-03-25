@@ -95,11 +95,12 @@ class MNISTDataModule(pl.LightningDataModule):
   
   更详细的用法参考[LightningModule](https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_module.html?highlight=LightningModule)
 
+
 ## Datasets of transformers
 
 datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。以下主要从datasets加载数据、处理等两方面做介绍。其他功能参考[datasets文档](https://huggingface.co/docs/datasets)
 
-### 数据加载
+### datasets数据加载
 
 数据加载支持以下加载方式：
 - The Hub
@@ -144,3 +145,39 @@ df = pd.DataFrame({"a": [1, 2, 3]})
 
 dataset = Dataset.from_pandas(df)
 ```
+
+### datasets数据处理
+
+主要包括
+- 排序和分割
+- 删除、重命名columns及其他列操作
+- 转换函数
+- datasets合并
+- 自定义格式转换
+- 保存或导出数据
+
+#### 排序和分割
+
+**sort**
+按列排序：
+
+```python
+sorted_dataset = dataset.sort('label')
+```
+
+**Shuffle**
+
+随即打乱：
+
+```python
+shuffled_dataset = sorted_dataset.shuffle(seed=42)
+```
+
+**Select and Filter**
+
+datasets使用两个函数用于过滤数据：`datasets.Dataset.select() and datasets.Dataset.filter().`
+
+**Split**
+
+分割训练集和测试集数据，使用`datasets.Dataset.train_test_split()`，默认`shuffle=True`。该方法类似sklearn的train_test_split，但是没有stratified选项。
+
