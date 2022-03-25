@@ -98,3 +98,49 @@ class MNISTDataModule(pl.LightningDataModule):
 ## Datasets of transformers
 
 datasets后端采用Apache Arrow格式，极大的提高了数据的处理速度。
+
+###  Load
+
+数据加载支持以下加载方式：
+- The Hub
+- Local files
+- In-memory data
+- Offline
+- A specific slice of a split
+
+**加载本地及远程文件**
+
+支持加载`csv/json/txt/Parquet`等文件
+
+```python
+from datasets import load_dataset
+
+file_type = "csv" # json/text/parquet
+data_files = {"train": train_file_path}
+# data_files = train_file_path
+dataset = load_dataset(file_type, data_files=data_files)
+```
+
+**从内存加载**
+
+从dict对象加载
+
+```python
+from datasets import Dataset
+
+my_dict = {"a": [1, 2, 3]}
+
+dataset = Dataset.from_dict(my_dict)
+```
+
+从pandas Dataframe加载
+
+```python
+import pandas as pd
+from datasets import Dataset
+
+
+df = pd.DataFrame({"a": [1, 2, 3]})
+
+dataset = Dataset.from_pandas(df)
+```
